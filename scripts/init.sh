@@ -28,7 +28,3 @@ term_handler() {
 }
 
 trap 'term_handler' SIGTERM
-
-./start.sh &
-killpid="$!"
-wait $killpid
