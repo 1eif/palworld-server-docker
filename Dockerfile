@@ -31,8 +31,6 @@ ENV PORT= \
     
 RUN apt-get update && apt-get install -y curl
 
-RUN useradd -m steam
-
 RUN mkdir -p /palworld/backups
 RUN chown -R steam:steam /palworld
 
