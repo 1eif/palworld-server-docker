@@ -29,24 +29,11 @@ ENV PORT= \
     QUERY_PORT=27015 \
     TZ=UTC
     
-RUN apt-get update && apt-get install -y curl
-
-RUN mkdir -p /palworld/backups
-RUN chown -R steam:steam /palworld
-
-RUN echo '#!/bin/bash' > /start.sh
-RUN echo 'if [ "${UPDATE_ON_BOOT}" = true ]; then' >> /start.sh
-RUN echo '    printf "\e[0;32m*****STARTING INSTALL/UPDATE*****\e[0m\n"' >> /start.sh
-RUN echo '    su steam -c "/home/steam/steamcmd/steamcmd.sh +force_install_dir \"/palworld\" +login anonymous +app_update 2394010 validate +quit"' >> /start.sh
-RUN echo 'fi' >> /start.sh
-RUN chmod +x /start.sh
-
-CMD ["/start.sh"]
-
 
 COPY ./scripts/* /home/steam/server/
-RUN chmod +x /home/steam/server/start.sh /home/steam/server/backup.sh && \
+RUN chmod +x /home/steam/server/init.sh /home/steam/server/start.sh /home/steam/server/backup.sh && \
     mv /home/steam/server/backup.sh /usr/local/bin/backup
+RUN /home/steam/server/init.sh
 
 WORKDIR /home/steam/server
 
@@ -54,4 +41,4 @@ HEALTHCHECK --start-period=5m \
     CMD pgrep "PalServer-Linux" > /dev/null || exit 1
 
 EXPOSE ${PORT} ${RCON_PORT}
-ENTRYPOINT ["/home/steam/server/init.sh"]
+ENTRYPOINT ["/home/steam/server/start.sh"]
